@@ -1,0 +1,346 @@
+User
+
+1.Customer---CustomerId(email)------PK     
+	  password
+	  Firstname
+	  Lastname
+	  mobileno
+	  City
+	
+
+
+
+2.Adminlogin----EmaiId
+	    ----Password
+
+
+3.Category-----Electronics----CategoryId--------PK
+			      Categoyname
+			      Pictures
+
+
+
+
+
+4.ProductDescription----ProductId---------PK
+			Productname
+			Actualprice
+			Discount
+			Quantity
+			Description
+			Image
+			CategoryId------FK
+
+			
+			
+
+5.Orders--------OrderId---------(PK)
+		CustomerId------(FK)
+		ProductId-------(FK)
+		ModeofPayment
+		Adress
+
+6.OrderDetail----OrderId------(FK)
+		Quantity
+		ProductId--------(FK)
+		Productname------(FK)
+		Discountprice
+		FinalPrice
+
+7.Payment-------OrderId-----------(FK)
+		CustomerId--------(FK)
+		Bankname
+		Branch
+		CardNo
+		CVVNo
+
+
+USE [OnlineShopping]
+GO
+
+/****** Object:  Table [dbo].[AdminLogin]    Script Date: 13-11-2021 12:54:30 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[AdminLogin](
+	[AdminId] [varchar](50) NOT NULL,
+	[AdminPassword] [varchar](50) NOT NULL,
+ CONSTRAINT [PK_AdminLogin] PRIMARY KEY CLUSTERED 
+(
+	[AdminId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+------------------------------------------------------------------------------------------------------------
+
+
+USE [OnlineShopping]
+GO
+
+/****** Object:  Table [dbo].[Category]    Script Date: 13-11-2021 12:55:05 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[Category](
+	[CategoryId] [int] NOT NULL,
+	[CategoryName] [varchar](50) NULL,
+	[Pictures] [image] NULL,
+ CONSTRAINT [PK_Category] PRIMARY KEY CLUSTERED 
+(
+	[CategoryId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+USE [OnlineShopping]
+GO
+
+/****** Object:  Table [dbo].[Customer]    Script Date: 13-11-2021 12:55:19 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[Customer](
+	[CustomerId] [int] NOT NULL,
+	[EmailId] [varchar](50) NOT NULL,
+	[Password] [varchar](50) NOT NULL,
+	[FirstName] [varchar](50) NOT NULL,
+	[LastName] [varchar](50) NULL,
+	[MobileNo] [int] NOT NULL,
+	[City] [varchar](50) NULL,
+ CONSTRAINT [PK_Customer] PRIMARY KEY CLUSTERED 
+(
+	[CustomerId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+
+
+---------------------------------------------------------------------------------------------------------------
+
+
+USE [OnlineShopping]
+GO
+
+/****** Object:  Table [dbo].[OrderDetails]    Script Date: 13-11-2021 12:55:45 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[OrderDetails](
+	[OrderId] [int] NOT NULL,
+	[Quantity] [int] NOT NULL,
+	[ProductId] [int] NOT NULL,
+	[ProductName] [varchar](50) NOT NULL,
+	[DiscountPrice] [money] NULL,
+	[FinalPrice] [money] NOT NULL
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+ALTER TABLE [dbo].[OrderDetails]  WITH CHECK ADD  CONSTRAINT [FK_OrderDetails_Orders] FOREIGN KEY([OrderId])
+REFERENCES [dbo].[Orders] ([OrderId])
+GO
+
+ALTER TABLE [dbo].[OrderDetails] CHECK CONSTRAINT [FK_OrderDetails_Orders]
+GO
+
+ALTER TABLE [dbo].[OrderDetails]  WITH CHECK ADD  CONSTRAINT [FK_OrderDetails_ProductDescription] FOREIGN KEY([ProductId])
+REFERENCES [dbo].[ProductDescription] ([ProductId])
+GO
+
+ALTER TABLE [dbo].[OrderDetails] CHECK CONSTRAINT [FK_OrderDetails_ProductDescription]
+GO
+
+-----------------------------------------------------------------------------------------------------------------------
+
+
+
+USE [OnlineShopping]
+GO
+
+/****** Object:  Table [dbo].[Orders]    Script Date: 13-11-2021 12:56:08 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[Orders](
+	[OrderId] [int] NOT NULL,
+	[CustomerId] [int] NOT NULL,
+	[ProductId] [int] NOT NULL,
+	[ModeOfPayment] [varchar](50) NOT NULL,
+	[Address] [varchar](max) NULL,
+ CONSTRAINT [PK_OrderDetails] PRIMARY KEY CLUSTERED 
+(
+	[OrderId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+ALTER TABLE [dbo].[Orders]  WITH CHECK ADD  CONSTRAINT [FK_OrderDetails_Customer] FOREIGN KEY([CustomerId])
+REFERENCES [dbo].[Customer] ([CustomerId])
+GO
+
+ALTER TABLE [dbo].[Orders] CHECK CONSTRAINT [FK_OrderDetails_Customer]
+GO
+
+ALTER TABLE [dbo].[Orders]  WITH CHECK ADD  CONSTRAINT [FK_Orders_ProductDescription] FOREIGN KEY([ProductId])
+REFERENCES [dbo].[ProductDescription] ([ProductId])
+GO
+
+ALTER TABLE [dbo].[Orders] CHECK CONSTRAINT [FK_Orders_ProductDescription]
+GO
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+USE [OnlineShopping]
+GO
+
+/****** Object:  Table [dbo].[Payment]    Script Date: 13-11-2021 12:56:25 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[Payment](
+	[OrderId] [int] NOT NULL,
+	[CustomerId] [int] NOT NULL,
+	[BankName] [varchar](50) NOT NULL,
+	[IFSCCode] [varchar](50) NOT NULL,
+	[CardNo] [int] NOT NULL,
+	[CVVNo] [int] NOT NULL,
+	[UPINo] [varchar](50) NOT NULL
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+ALTER TABLE [dbo].[Payment]  WITH CHECK ADD  CONSTRAINT [FK_Payment_Customer] FOREIGN KEY([CustomerId])
+REFERENCES [dbo].[Customer] ([CustomerId])
+GO
+
+ALTER TABLE [dbo].[Payment] CHECK CONSTRAINT [FK_Payment_Customer]
+GO
+
+ALTER TABLE [dbo].[Payment]  WITH CHECK ADD  CONSTRAINT [FK_Payment_Orders] FOREIGN KEY([OrderId])
+REFERENCES [dbo].[Orders] ([OrderId])
+GO
+
+ALTER TABLE [dbo].[Payment] CHECK CONSTRAINT [FK_Payment_Orders]
+GO
+
+
+--------------------------------------------------------------------------------------------------------------
+
+USE [OnlineShopping]
+GO
+
+/****** Object:  Table [dbo].[ProductDescription]    Script Date: 13-11-2021 12:56:37 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[ProductDescription](
+	[ProductId] [int] NOT NULL,
+	[ProductName] [varchar](50) NOT NULL,
+	[ActualPrice] [money] NOT NULL,
+	[Discount] [money] NULL,
+	[Quantity] [int] NOT NULL,
+	[Description] [varchar](max) NULL,
+	[Image] [image] NOT NULL,
+	[CategoryId] [int] NOT NULL,
+ CONSTRAINT [PK_ProductDescription] PRIMARY KEY CLUSTERED 
+(
+	[ProductId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+ALTER TABLE [dbo].[ProductDescription]  WITH CHECK ADD  CONSTRAINT [FK_ProductDescription_ProductDescription] FOREIGN KEY([CategoryId])
+REFERENCES [dbo].[Category] ([CategoryId])
+GO
+
+ALTER TABLE [dbo].[ProductDescription] CHECK CONSTRAINT [FK_ProductDescription_ProductDescription]
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+ 
